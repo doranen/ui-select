@@ -161,8 +161,8 @@
      * put as much logic in the controller (instead of the link functions) as possible so it can be easily tested.
      */
         .controller('uiSelectCtrl',
-        ['$scope', '$element', '$timeout', '$filter', 'RepeatParser', 'uiSelectMinErr', 'uiSelectConfig',
-            function($scope, $element, $timeout, $filter, RepeatParser, uiSelectMinErr, uiSelectConfig) {
+        ['$scope', '$element', '$timeout', '$filter', 'RepeatParser', 'uiSelectMinErr', 'uiSelectConfig', '$document',
+            function($scope, $element, $timeout, $filter, RepeatParser, uiSelectMinErr, uiSelectConfig, $document) {
 
                 var ctrl = this;
 
@@ -528,31 +528,31 @@
 
                 var containerSizeWatch;
                 ctrl.sizeSearchInput = function(){
-                    var input = _searchInput[0],
-                        container = _searchInput.parent().parent()[0];
-                    _searchInput.css('width','10px');
-                    var calculate = function(){
-                        var newWidth = container.clientWidth - input.offsetLeft - 10;
-                        if(newWidth < 50) newWidth = container.clientWidth;
-                        _searchInput.css('width',newWidth+'px');
-                    };
-                    // RIPFOG, need this so that it correclty changes widths on window resize
-                    window.addEventListener('resize', function() {
-                        calculate();
-                    });
-                    $timeout(function(){ //Give tags time to render correctly
-                        if (container.clientWidth === 0 && !containerSizeWatch){
-                            containerSizeWatch = $scope.$watch(function(){ return container.clientWidth;}, function(newValue){
-                                if (newValue !== 0){
-                                    calculate();
-                                    containerSizeWatch();
-                                    containerSizeWatch = null;
-                                }
-                            });
-                        }else if (!containerSizeWatch) {
-                            calculate();
-                        }
-                    }, 0, false);
+                    //TODO RIPFOG, don't resize container, not using like an inline tagging input.  Width is set
+                    //TODO by css
+                    if (!ctrl.rfAlwaysOpen) {
+                        var input = _searchInput[0],
+                            container = _searchInput.parent().parent()[0];
+                        _searchInput.css('width','10px');
+                        var calculate = function(){
+                            var newWidth = container.clientWidth - input.offsetLeft - 10;
+                            if(newWidth < 50) newWidth = container.clientWidth;
+                            _searchInput.css('width',newWidth+'px');
+                        };
+                        $timeout(function(){ //Give tags time to render correctly
+                            if (container.clientWidth === 0 && !containerSizeWatch){
+                                containerSizeWatch = $scope.$watch(function(){ return container.clientWidth;}, function(newValue){
+                                    if (newValue !== 0){
+                                        calculate();
+                                        containerSizeWatch();
+                                        containerSizeWatch = null;
+                                    }
+                                });
+                            }else if (!containerSizeWatch) {
+                                calculate();
+                            }
+                        }, 0, false);
+                    }
                 };
 
                 function _handleDropDownSelection(key) {
@@ -586,64 +586,65 @@
                 }
 
                 // Handles selected options in "multiple" mode
-                function _handleMatchSelection(key){
-                    var caretPosition = _getCaretPosition(_searchInput[0]),
-                        length = ctrl.selected.length,
-                    // none  = -1,
-                        first = 0,
-                        last  = length-1,
-                        curr  = ctrl.activeMatchIndex,
-                        next  = ctrl.activeMatchIndex+1,
-                        prev  = ctrl.activeMatchIndex-1,
-                        newIndex = curr;
-
-                    if(caretPosition > 0 || (ctrl.search.length && key == KEY.RIGHT)) return false;
-
-                    ctrl.close();
-
-                    function getNewActiveMatchIndex(){
-                        switch(key){
-                            case KEY.LEFT:
-                                // Select previous/first item
-                                if(~ctrl.activeMatchIndex) return prev;
-                                // Select last item
-                                else return last;
-                                break;
-                            case KEY.RIGHT:
-                                // Open drop-down
-                                if(!~ctrl.activeMatchIndex || curr === last){
-                                    ctrl.activate();
-                                    return false;
-                                }
-                                // Select next/last item
-                                else return next;
-                                break;
-                            case KEY.BACKSPACE:
-                                // Remove selected item and select previous/first
-                                if(~ctrl.activeMatchIndex){
-                                    ctrl.removeChoice(curr);
-                                    return prev;
-                                }
-                                // Select last item
-                                else return last;
-                                break;
-                            case KEY.DELETE:
-                                // Remove selected item and select next item
-                                if(~ctrl.activeMatchIndex){
-                                    ctrl.removeChoice(ctrl.activeMatchIndex);
-                                    return curr;
-                                }
-                                else return false;
-                        }
-                    }
-
-                    newIndex = getNewActiveMatchIndex();
-
-                    if(!ctrl.selected.length || newIndex === false) ctrl.activeMatchIndex = -1;
-                    else ctrl.activeMatchIndex = Math.min(last,Math.max(first,newIndex));
-
-                    return true;
-                }
+                // TODO RIPFOG
+                //function _handleMatchSelection(key){
+                //    var caretPosition = _getCaretPosition(_searchInput[0]),
+                //        length = ctrl.selected.length,
+                //    // none  = -1,
+                //        first = 0,
+                //        last  = length-1,
+                //        curr  = ctrl.activeMatchIndex,
+                //        next  = ctrl.activeMatchIndex+1,
+                //        prev  = ctrl.activeMatchIndex-1,
+                //        newIndex = curr;
+                //
+                //    if(caretPosition > 0 || (ctrl.search.length && key == KEY.RIGHT)) return false;
+                //
+                //    ctrl.close();
+                //
+                //    function getNewActiveMatchIndex(){
+                //        switch(key){
+                //            case KEY.LEFT:
+                //                // Select previous/first item
+                //                if(~ctrl.activeMatchIndex) return prev;
+                //                // Select last item
+                //                else return last;
+                //                break;
+                //            case KEY.RIGHT:
+                //                // Open drop-down
+                //                if(!~ctrl.activeMatchIndex || curr === last){
+                //                    ctrl.activate();
+                //                    return false;
+                //                }
+                //                // Select next/last item
+                //                else return next;
+                //                break;
+                //            case KEY.BACKSPACE:
+                //                // Remove selected item and select previous/first
+                //                if(~ctrl.activeMatchIndex){
+                //                    ctrl.removeChoice(curr);
+                //                    return prev;
+                //                }
+                //                // Select last item
+                //                else return last;
+                //                break;
+                //            case KEY.DELETE:
+                //                // Remove selected item and select next item
+                //                if(~ctrl.activeMatchIndex){
+                //                    ctrl.removeChoice(ctrl.activeMatchIndex);
+                //                    return curr;
+                //                }
+                //                else return false;
+                //        }
+                //    }
+                //
+                //    newIndex = getNewActiveMatchIndex();
+                //
+                //    if(!ctrl.selected.length || newIndex === false) ctrl.activeMatchIndex = -1;
+                //    else ctrl.activeMatchIndex = Math.min(last,Math.max(first,newIndex));
+                //
+                //    return true;
+                //}
 
                 // Bind to keyboard shortcuts
                 _searchInput.on('keydown', function(e) {
@@ -659,8 +660,20 @@
                         var processed = false;
                         var tagged = false;
 
-                        if(ctrl.multiple && KEY.isHorizontalMovement(key)){
-                            processed = _handleMatchSelection(key);
+                        // TODO RIPFOG short circuit if text is selected
+                        if(ctrl.multiple && KEY.isHorizontalMovement(key) && !isTextSelected(_searchInput[0])){
+                            //TODO RIPFOG - disabling removing selections using keyboard
+                            processed = false; //_handleMatchSelection(key);
+                        }
+
+                        // TODO RIPFOG helper function
+                        function isTextSelected(input) {
+                            if (typeof input.selectionStart == "number") {
+                                return input.selectionStart != input.selectionEnd;
+                            } else if (typeof $document.selection != "undefined") {
+                                input.focus();
+                                return $document.selection.createRange().text.length;
+                            }
                         }
 
                         if (!processed && (ctrl.items.length > 0 || ctrl.tagging.isActivated)) {
@@ -852,11 +865,12 @@
                     return dupeIndex;
                 }
 
-                function _getCaretPosition(el) {
-                    if(angular.isNumber(el.selectionStart)) return el.selectionStart;
-                    // selectionStart is not supported in IE8 and we don't want hacky workarounds so we compromise
-                    else return el.value.length;
-                }
+                // TODO RIPFOG
+                //function _getCaretPosition(el) {
+                //    if(angular.isNumber(el.selectionStart)) return el.selectionStart;
+                //    // selectionStart is not supported in IE8 and we don't want hacky workarounds so we compromise
+                //    else return el.value.length;
+                //}
 
                 // See https://github.com/ivaynberg/select2/blob/3.4.6/select2.js#L1431
                 function _ensureHighlightVisible() {
