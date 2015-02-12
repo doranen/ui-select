@@ -288,7 +288,17 @@
                             } else {
                                 if (ctrl.multiple){
                                     //Remove already selected items (ex: while searching)
-                                    var filteredItems = items.filter(function(i) {return ctrl.selected.indexOf(i) < 0;});
+
+                                    //TODO RIPFOG Hack, ui-select has trouble removing pre selected items if search
+                                    //TODO results are done async and are objects, manually determine if an item is already selected
+                                    //TODO using naics code
+                                    //
+                                    //var filteredItems = items.filter(function(i) {return ctrl.selected.indexOf(i) < 0;});
+                                    var filteredItems = items.filter(function(i) {
+                                        return !ctrl.selected.filter(function(selItem) {
+                                            return selItem.code == i.code;
+                                        }).length;
+                                    });
                                     setItemsFn(filteredItems);
                                 }else{
                                     setItemsFn(items);
@@ -308,7 +318,16 @@
                                 setItemsFn(data);
                             }else{
                                 if ( data !== undefined ) {
-                                    var filteredItems = data.filter(function(i) {return selectedItems.indexOf(i) < 0;});
+                                    //TODO RIPFOG Hack, ui-select has trouble removing pre selected items if search
+                                    //TODO results are done async and are objects, manually determine if an item is already selected
+                                    //TODO using naics code
+                                    //
+                                    //var filteredItems = data.filter(function(i) {return selectedItems.indexOf(i) < 0;});
+                                    var filteredItems = data.filter(function(i) {
+                                        return !selectedItems.filter(function(selItem) {
+                                            return selItem.code == i.code;
+                                        }).length;
+                                    });
                                     setItemsFn(filteredItems);
                                 }
                             }
