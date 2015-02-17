@@ -232,7 +232,7 @@
                             _searchInput[0].focus();
                             //TODO RipFog
                             var _selectChoices = $element.querySelectorAll('ul.dropdown-menu');
-                            _selectChoices.css('max-height', window.innerHeight - _selectChoices[0].getBoundingClientRect().top - 20 + 'px');
+                            _selectChoices.css('max-height', window.innerHeight - _searchInput[0].getBoundingClientRect().bottom - 20 + 'px');
                         });
                     }
                 };
@@ -355,8 +355,6 @@
                         }
                         _refreshDelayPromise = $timeout(function() {
                             $scope.$eval(refreshAttr);
-                            //RipFog
-                            ctrl.sizeSearchInput();
                         }, ctrl.refreshDelay);
                     }
                 };
@@ -466,7 +464,7 @@
                                 });
                                 //TODO RipFog
                                 var _selectChoices = $element.querySelectorAll('ul.dropdown-menu');
-                                _selectChoices.css('max-height', window.innerHeight - _selectChoices[0].getBoundingClientRect().top - 20 + 'px');
+                                _selectChoices.css('max-height', window.innerHeight - _searchInput[0].getBoundingClientRect().bottom - 20 + 'px');
                             });
 
                             if (!ctrl.multiple || ctrl.closeOnSelect) {
@@ -536,7 +534,7 @@
                         });
                         //TODO RipFog
                         var _selectChoices = $element.querySelectorAll('ul.dropdown-menu');
-                        _selectChoices.css('max-height', window.innerHeight - _selectChoices[0].getBoundingClientRect().top - 20 + 'px');
+                        _selectChoices.css('max-height', window.innerHeight - _searchInput[0].getBoundingClientRect().bottom - 20 + 'px');
                     });
                 };
 
