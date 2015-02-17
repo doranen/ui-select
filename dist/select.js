@@ -1,14 +1,14 @@
 /*!
  * ui-select
  * http://github.com/angular-ui/ui-select
- * Version: 0.9.6 - 2015-02-12T23:30:52.015Z
+ * Version: 0.9.6 - 2015-02-17T00:43:26.483Z
  * License: MIT
  */
 
 
 (function () {
     "use strict";
-    var _ = _ || null;
+
     var KEY = {
         TAB: 9,
         ENTER: 13,
@@ -237,10 +237,10 @@
                         // Give it time to appear before focus
                         $timeout(function() {
                             ctrl.search = initSearchValue || ctrl.search;
-                            // RipFog
-                            if (!ctrl.rfAlwaysOpen) {
-                                _searchInput[0].focus();
-                            }
+                            _searchInput[0].focus();
+                            //TODO RipFog
+                            var _selectChoices = $element.querySelectorAll('ul.dropdown-menu');
+                            _selectChoices.css('max-height', window.innerHeight - _selectChoices[0].getBoundingClientRect().top - 20 + 'px');
                         });
                     }
                 };
@@ -472,6 +472,9 @@
                                     $item: item,
                                     $model: ctrl.parserResult.modelMapper($scope, locals)
                                 });
+                                //TODO RipFog
+                                var _selectChoices = $element.querySelectorAll('ul.dropdown-menu');
+                                _selectChoices.css('max-height', window.innerHeight - _selectChoices[0].getBoundingClientRect().top - 20 + 'px');
                             });
 
                             if (!ctrl.multiple || ctrl.closeOnSelect) {
@@ -480,8 +483,6 @@
                             if ($event && $event.type === 'click') {
                                 ctrl.clickTriggeredSelect = true;
                             }
-                            // RipFog
-                            _resetSearchInput();
                         }
                     }
                 };
@@ -490,10 +491,7 @@
                 ctrl.close = function(skipFocusser) {
                     if (!ctrl.open) return;
                     _resetSearchInput();
-                    // RipFog
-                    if (!ctrl.rfAlwaysOpen) {
-                        ctrl.open = false;
-                    }
+                    ctrl.open = false;
                     if (!ctrl.multiple){
                         $timeout(function(){
                             ctrl.focusser.prop('disabled', false);
@@ -544,6 +542,9 @@
                             $item: removedChoice,
                             $model: ctrl.parserResult.modelMapper($scope, locals)
                         });
+                        //TODO RipFog
+                        var _selectChoices = $element.querySelectorAll('ul.dropdown-menu');
+                        _selectChoices.css('max-height', window.innerHeight - _selectChoices[0].getBoundingClientRect().top - 20 + 'px');
                     });
                 };
 
@@ -553,33 +554,31 @@
                     return ctrl.placeholder;
                 };
 
-                var containerSizeWatch;
+                //var containerSizeWatch;
                 ctrl.sizeSearchInput = function(){
                     //TODO RIPFOG, don't resize container, not using like an inline tagging input.  Width is set
                     //TODO by css
-                    if (!ctrl.rfAlwaysOpen) {
-                        var input = _searchInput[0],
-                            container = _searchInput.parent().parent()[0];
-                        _searchInput.css('width','10px');
-                        var calculate = function(){
-                            var newWidth = container.clientWidth - input.offsetLeft - 10;
-                            if(newWidth < 50) newWidth = container.clientWidth;
-                            _searchInput.css('width',newWidth+'px');
-                        };
-                        $timeout(function(){ //Give tags time to render correctly
-                            if (container.clientWidth === 0 && !containerSizeWatch){
-                                containerSizeWatch = $scope.$watch(function(){ return container.clientWidth;}, function(newValue){
-                                    if (newValue !== 0){
-                                        calculate();
-                                        containerSizeWatch();
-                                        containerSizeWatch = null;
-                                    }
-                                });
-                            }else if (!containerSizeWatch) {
-                                calculate();
-                            }
-                        }, 0, false);
-                    }
+                    //    var input = _searchInput[0],
+                    //        container = _searchInput.parent().parent()[0];
+                    //    _searchInput.css('width','10px');
+                    //    var calculate = function(){
+                    //        var newWidth = container.clientWidth - input.offsetLeft - 10;
+                    //        if(newWidth < 50) newWidth = container.clientWidth;
+                    //        _searchInput.css('width',newWidth+'px');
+                    //    };
+                    //    $timeout(function(){ //Give tags time to render correctly
+                    //        if (container.clientWidth === 0 && !containerSizeWatch){
+                    //            containerSizeWatch = $scope.$watch(function(){ return container.clientWidth;}, function(newValue){
+                    //                if (newValue !== 0){
+                    //                    calculate();
+                    //                    containerSizeWatch();
+                    //                    containerSizeWatch = null;
+                    //                }
+                    //            });
+                    //        }else if (!containerSizeWatch) {
+                    //            calculate();
+                    //        }
+                    //    }, 0, false);
                 };
 
                 function _handleDropDownSelection(key) {
@@ -950,19 +949,6 @@
 
                         var searchInput = element.querySelectorAll('input.ui-select-search');
 
-                        // RipFog - add option for keeping the choices always open
-                        $select.rfAlwaysOpen = function() {
-                            if (angular.isDefined(attrs.rfAlwaysOpen)) {
-                                return $parse(attrs.rfAlwaysOpen)();
-                            } else {
-                                return uiSelectConfig.rfAlwaysOpen;
-                            }
-                        }();
-
-                        if ($select.rfAlwaysOpen) {
-                            $select.open = true;
-                        }
-
                         $select.multiple = angular.isDefined(attrs.multiple) && (
                         attrs.multiple === '' ||
                         attrs.multiple.toLowerCase() === 'multiple' ||
@@ -1306,7 +1292,6 @@
 
                             choices.attr('ng-repeat', RepeatParser.getNgRepeatExpression($select.parserResult.itemName, '$select.items', $select.parserResult.trackByExp, groupByExp))
                                 .attr('ng-if', '$select.open') //Prevent unnecessary watches when dropdown is closed
-                                .attr('ng-mouseleave', '$select.unsetActiveItem()') // RipFog
                                 .attr('ng-mouseenter', '$select.setActiveItem('+$select.parserResult.itemName +')')
                                 .attr('ng-click', '$select.select(' + $select.parserResult.itemName + ',false,$event)');
 
