@@ -230,9 +230,6 @@
                         $timeout(function() {
                             ctrl.search = initSearchValue || ctrl.search;
                             _searchInput[0].focus();
-                            //TODO RipFog
-                            var _selectChoices = $element.querySelectorAll('ul.dropdown-menu');
-                            _selectChoices.css('max-height', window.innerHeight - _searchInput[0].getBoundingClientRect().bottom - 20 + 'px');
                         });
                     }
                 };
@@ -462,9 +459,6 @@
                                     $item: item,
                                     $model: ctrl.parserResult.modelMapper($scope, locals)
                                 });
-                                //TODO RipFog
-                                var _selectChoices = $element.querySelectorAll('ul.dropdown-menu');
-                                _selectChoices.css('max-height', window.innerHeight - _searchInput[0].getBoundingClientRect().bottom - 20 + 'px');
                             });
 
                             if (!ctrl.multiple || ctrl.closeOnSelect) {
@@ -532,9 +526,6 @@
                             $item: removedChoice,
                             $model: ctrl.parserResult.modelMapper($scope, locals)
                         });
-                        //TODO RipFog
-                        var _selectChoices = $element.querySelectorAll('ul.dropdown-menu');
-                        _selectChoices.css('max-height', window.innerHeight - _searchInput[0].getBoundingClientRect().bottom - 20 + 'px');
                     });
                 };
 

@@ -1,7 +1,7 @@
 /*!
  * ui-select
  * http://github.com/angular-ui/ui-select
- * Version: 0.9.6 - 2015-02-17T17:37:05.812Z
+ * Version: 0.9.6 - 2015-02-20T17:32:40.848Z
  * License: MIT
  */
 
@@ -238,9 +238,6 @@
                         $timeout(function() {
                             ctrl.search = initSearchValue || ctrl.search;
                             _searchInput[0].focus();
-                            //TODO RipFog
-                            var _selectChoices = $element.querySelectorAll('ul.dropdown-menu');
-                            _selectChoices.css('max-height', window.innerHeight - _searchInput[0].getBoundingClientRect().bottom - 20 + 'px');
                         });
                     }
                 };
@@ -470,9 +467,6 @@
                                     $item: item,
                                     $model: ctrl.parserResult.modelMapper($scope, locals)
                                 });
-                                //TODO RipFog
-                                var _selectChoices = $element.querySelectorAll('ul.dropdown-menu');
-                                _selectChoices.css('max-height', window.innerHeight - _searchInput[0].getBoundingClientRect().bottom - 20 + 'px');
                             });
 
                             if (!ctrl.multiple || ctrl.closeOnSelect) {
@@ -540,9 +534,6 @@
                             $item: removedChoice,
                             $model: ctrl.parserResult.modelMapper($scope, locals)
                         });
-                        //TODO RipFog
-                        var _selectChoices = $element.querySelectorAll('ul.dropdown-menu');
-                        _selectChoices.css('max-height', window.innerHeight - _searchInput[0].getBoundingClientRect().bottom - 20 + 'px');
                     });
                 };
 
